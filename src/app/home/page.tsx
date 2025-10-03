@@ -14,9 +14,6 @@ type GeoInfo = {
   timezone?: string;
 };
 
-type GeoError = { error: string };
-type GeoResponse = GeoInfo | GeoError;
-
 type SearchHistory = {
   id: number;
   ip: string;
@@ -30,6 +27,7 @@ export default function HomePage() {
   const [ip, setIp] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [history, setHistory] = useState<SearchHistory[]>([]);
+  const [selected, setSelected] = useState<number[]>([]);
 
   const token =
     typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -52,9 +50,9 @@ export default function HomePage() {
         ? `${API_URL}/api/geo?ip=${ipParam}`
         : `${API_URL}/api/geo`;
       const res = await fetch(url);
-      const data: GeoResponse = await res.json();
+      const data = await res.json();
 
-      if ("error" in data) {
+      if (data.error) {
         setError("Failed to fetch geo data.");
         return;
       }
@@ -104,6 +102,27 @@ export default function HomePage() {
     router.push("/login");
   }
 
+  const toggleSelect = (id: number) => {
+    setSelected((prev) =>
+      prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id]
+    );
+  };
+
+  const deleteSelected = async () => {
+    if (selected.length === 0) return;
+    try {
+      await fetch(`${API_URL}/api/history`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: selected }),
+      });
+      setSelected([]);
+      fetchHistory();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <main className="p-8 max-w-2xl mx-auto">
       <h1 className="text-2xl font-bold mb-4">🌍 Geo Info</h1>
@@ -143,14 +162,40 @@ export default function HomePage() {
 
       {/* History */}
       <h2 className="text-xl font-semibold mb-2">History</h2>
-      <ul className="list-disc pl-5">
+      {history.length > 0 && (
+        <div className="flex items-center mb-4 gap-2">
+            <input
+              type="checkbox"
+              checked={selected.length === history.length}
+              onChange={(e) =>
+                setSelected(e.target.checked ? history.map((h) => h.id) : [])
+              }
+            />
+      
+            <button
+              className="bg-red-600 text-white px-2 py-1 text-sm rounded"
+              onClick={deleteSelected}
+              disabled={selected.length === 0}
+            >
+              Delete Selected
+            </button>
+        </div>
+      )}
+      <ul className="space-y-2">
         {history.map((h) => (
-          <li
-            key={h.id}
-            className="cursor-pointer text-blue-600"
-            onClick={() => fetchGeo(h.ip)}
-          >
-            {h.ip} - {h.result.city}, {h.result.country} ({new Date(h.created_at).toLocaleString()})
+          <li key={h.id} className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={selected.includes(h.id)}
+              onChange={() => toggleSelect(h.id)}
+            />
+            <span
+              className="cursor-pointer text-blue-600"
+              onClick={() => fetchGeo(h.ip)}
+            >
+              {h.ip} - {h.result.city}, {h.result.country} (
+              {new Date(h.created_at).toLocaleString()})
+            </span>
           </li>
         ))}
       </ul>
