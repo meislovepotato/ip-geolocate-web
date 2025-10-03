@@ -8,16 +8,13 @@ type GeoInfo = {
   city?: string;
   region?: string;
   country?: string;
-  loc?: string; // "lat,long"
+  loc?: string;
   org?: string;
   postal?: string;
   timezone?: string;
 };
 
-type GeoError = {
-  error: string;
-};
-
+type GeoError = { error: string };
 type GeoResponse = GeoInfo | GeoError;
 
 type SearchHistory = {
@@ -37,20 +34,22 @@ export default function HomePage() {
   const token =
     typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
   useEffect(() => {
     if (!token) {
       router.push("/login");
       return;
     }
-    fetchGeo(); // show logged-in user's IP on first load
+    fetchGeo();
     fetchHistory();
   }, [router, token]);
 
   async function fetchGeo(ipParam?: string) {
     try {
       const url = ipParam
-        ? `http://localhost:5000/api/geo?ip=${ipParam}`
-        : "http://localhost:5000/api/geo";
+        ? `${API_URL}/api/geo?ip=${ipParam}`
+        : `${API_URL}/api/geo`;
       const res = await fetch(url);
       const data: GeoResponse = await res.json();
 
@@ -68,7 +67,7 @@ export default function HomePage() {
 
   async function fetchHistory() {
     try {
-      const res = await fetch("http://localhost:5000/api/history");
+      const res = await fetch(`${API_URL}/api/history`);
       const data: SearchHistory[] = await res.json();
       setHistory(data);
     } catch (err) {
@@ -89,7 +88,7 @@ export default function HomePage() {
 
   const handleClear = () => {
     setIp("");
-    fetchGeo(); // revert to user’s IP
+    fetchGeo();
   };
 
   const isValidIP = (input: string) => {
@@ -117,24 +116,13 @@ export default function HomePage() {
           placeholder="Enter IP address"
           className="border px-3 py-2 rounded flex-1"
         />
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded"
-        >
+        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
           Search
         </button>
-        <button
-          type="button"
-          onClick={handleClear}
-          className="bg-gray-500 text-white px-4 py-2 rounded"
-        >
+        <button type="button" onClick={handleClear} className="bg-gray-500 text-white px-4 py-2 rounded">
           Clear
         </button>
-        <button
-          type="button"
-          onClick={handleLogout}
-          className="bg-red-600 text-white px-4 py-2 rounded"
-        >
+        <button type="button" onClick={handleLogout} className="bg-red-600 text-white px-4 py-2 rounded">
           Logout
         </button>
       </form>
