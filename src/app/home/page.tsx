@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import GeoMap from "./components/GeoMap";
 
 type GeoInfo = {
   ip: string;
@@ -153,12 +154,18 @@ export default function HomePage() {
       {geo && (
         <div className="bg-white shadow p-4 mb-4 rounded">
           <p><b>IP:</b> {geo.ip}</p>
+          <p><b>Hostname:</b> {geo.hostname || "N/A"}</p>
           <p><b>City:</b> {geo.city}</p>
           <p><b>Region:</b> {geo.region}</p>
           <p><b>Country:</b> {geo.country}</p>
           <p><b>Location:</b> {geo.loc}</p>
+          <p><b>Organization:</b> {geo.org}</p>
+          <p><b>Postal:</b> {geo.postal || "N/A"}</p>
+          <p><b>Timezone:</b> {geo.timezone}</p>
         </div>
       )}
+      {/* Geo Map */}
+      {geo && <GeoMap geo={geo} />}
 
       {/* History */}
       <h2 className="text-xl font-semibold mb-2">History</h2>
