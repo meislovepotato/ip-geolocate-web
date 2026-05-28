@@ -125,112 +125,154 @@ export default function HomePage() {
   };
 
   return (
-    <main className="p-8 max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">🌍 Geo Info</h1>
+    <main className="p-6 max-w-5xl mx-auto">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-slate-900 mb-2">🌍 IP Geolocation Lookup</h1>
+        <p className="text-slate-500">
+          Search for any IP address and view location details on a map
+        </p>
+      </div>
 
       {/* Search Form */}
-      <form onSubmit={handleSearch} className="mb-4 flex gap-2">
-        <input
-          type="text"
-          value={ip}
-          onChange={(e) => setIp(e.target.value)}
-          placeholder="Enter IP address"
-          className="border px-3 py-2 rounded flex-1"
-        />
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded"
-          disabled={loading}
-        >
-          {loading ? 'Searching...' : 'Search'}
-        </button>
-        <button
-          type="button"
-          onClick={handleClear}
-          className="bg-gray-500 text-white px-4 py-2 rounded"
-        >
-          Clear
-        </button>
-        <button
-          type="button"
-          onClick={handleLogout}
-          className="bg-red-600 text-white px-4 py-2 rounded"
-        >
-          Logout
-        </button>
+      <form onSubmit={handleSearch} className="mb-8">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <input
+            type="text"
+            value={ip}
+            onChange={(e) => setIp(e.target.value)}
+            placeholder="Enter IP address (e.g., 8.8.8.8)"
+            className="flex-1 px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+          />
+          <div className="flex gap-2">
+            <button
+              type="submit"
+              className="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={loading}
+            >
+              {loading ? 'Searching...' : 'Search'}
+            </button>
+            <button
+              type="button"
+              onClick={handleClear}
+              className="px-4 py-3 border border-slate-300 text-slate-700 font-medium rounded-lg hover:bg-slate-50 transition"
+            >
+              Clear
+            </button>
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="px-4 py-3 bg-red-500 text-white font-medium rounded-lg hover:bg-red-600 transition shadow-md"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
       </form>
 
-      {error && <p className="text-red-600 mb-4">{error}</p>}
+      {error && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg">
+          {error}
+        </div>
+      )}
 
       {/* Geo Result */}
       {geo && (
-        <div className="bg-white shadow p-4 mb-4 rounded">
-          <p>
-            <b>IP:</b> {geo.ip}
-          </p>
-          <p>
-            <b>Hostname:</b> {geo.hostname || 'N/A'}
-          </p>
-          <p>
-            <b>City:</b> {geo.city}
-          </p>
-          <p>
-            <b>Region:</b> {geo.region}
-          </p>
-          <p>
-            <b>Country:</b> {geo.country}
-          </p>
-          <p>
-            <b>Location:</b> {geo.loc}
-          </p>
-          <p>
-            <b>Organization:</b> {geo.org}
-          </p>
-          <p>
-            <b>Postal:</b> {geo.postal || 'N/A'}
-          </p>
-          <p>
-            <b>Timezone:</b> {geo.timezone}
-          </p>
+        <div className="bg-white rounded-xl shadow-lg p-6 mb-6 border border-slate-200">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="p-3 bg-slate-50 rounded-lg">
+              <p className="text-xs text-slate-500 font-semibold uppercase mb-1">IP Address</p>
+              <p className="font-mono font-bold text-lg text-slate-900">{geo.ip}</p>
+            </div>
+            <div className="p-3 bg-slate-50 rounded-lg">
+              <p className="text-xs text-slate-500 font-semibold uppercase mb-1">City</p>
+              <p className="font-bold text-slate-900">{geo.city || 'N/A'}</p>
+            </div>
+            <div className="p-3 bg-slate-50 rounded-lg">
+              <p className="text-xs text-slate-500 font-semibold uppercase mb-1">Region</p>
+              <p className="font-bold text-slate-900">{geo.region || 'N/A'}</p>
+            </div>
+            <div className="p-3 bg-slate-50 rounded-lg">
+              <p className="text-xs text-slate-500 font-semibold uppercase mb-1">Country</p>
+              <p className="font-bold text-slate-900">{geo.country || 'N/A'}</p>
+            </div>
+            <div className="p-3 bg-slate-50 rounded-lg">
+              <p className="text-xs text-slate-500 font-semibold uppercase mb-1">Coordinates</p>
+              <p className="font-mono text-sm text-slate-900">{geo.loc || 'N/A'}</p>
+            </div>
+            <div className="p-3 bg-slate-50 rounded-lg">
+              <p className="text-xs text-slate-500 font-semibold uppercase mb-1">Organization</p>
+              <p className="font-bold text-slate-900">{geo.org || 'N/A'}</p>
+            </div>
+            <div className="p-3 bg-slate-50 rounded-lg">
+              <p className="text-xs text-slate-500 font-semibold uppercase mb-1">Postal</p>
+              <p className="font-bold text-slate-900">{geo.postal || 'N/A'}</p>
+            </div>
+            <div className="p-3 bg-slate-50 rounded-lg">
+              <p className="text-xs text-slate-500 font-semibold uppercase mb-1">Timezone</p>
+              <p className="font-bold text-slate-900">{geo.timezone || 'N/A'}</p>
+            </div>
+            {geo.hostname && (
+              <div className="p-3 bg-slate-50 rounded-lg col-span-2">
+                <p className="text-xs text-slate-500 font-semibold uppercase mb-1">Hostname</p>
+                <p className="font-mono text-sm text-slate-900">{geo.hostname}</p>
+              </div>
+            )}
+          </div>
         </div>
       )}
       {/* Geo Map */}
       {geo && <GeoMap geo={geo} />}
 
       {/* History */}
-      <h2 className="text-xl font-semibold mb-2">History</h2>
       {history.length > 0 && (
-        <div className="flex items-center mb-4 gap-2">
-          <input
-            type="checkbox"
-            checked={selected.length === history.length}
-            onChange={(e) => setSelected(e.target.checked ? history.map((h) => h.id) : [])}
-          />
-
-          <button
-            className="bg-red-600 text-white px-2 py-1 text-sm rounded"
-            onClick={deleteSelected}
-            disabled={selected.length === 0}
-          >
-            Delete Selected
-          </button>
-        </div>
-      )}
-      <ul className="space-y-2">
-        {history.map((h) => (
-          <li key={h.id} className="flex items-center gap-2">
+        <div className="mt-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-bold text-slate-900">Search History</h2>
+            {selected.length > 0 && (
+              <span className="text-sm text-slate-600">{selected.length} selected</span>
+            )}
+          </div>
+          <div className="flex items-center gap-3 mb-4">
             <input
               type="checkbox"
-              checked={selected.includes(h.id)}
-              onChange={() => toggleSelect(h.id)}
+              checked={selected.length === history.length}
+              onChange={(e) => setSelected(e.target.checked ? history.map((h) => h.id) : [])}
+              className="w-4 h-4 cursor-pointer"
             />
-            <span className="cursor-pointer text-blue-600" onClick={() => fetchGeo(h.ip)}>
-              {h.ip} - {h.result.city}, {h.result.country} (
-              {new Date(h.created_at).toLocaleString()})
-            </span>
-          </li>
-        ))}
-      </ul>
+            <button
+              className="px-4 py-2 bg-red-500 text-white text-sm font-semibold rounded-lg hover:bg-red-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              onClick={deleteSelected}
+              disabled={selected.length === 0}
+            >
+              Delete Selected
+            </button>
+          </div>
+          <div className="space-y-2">
+            {history.map((h) => (
+              <div
+                key={h.id}
+                className="flex items-center gap-3 p-3 bg-white rounded-lg border border-slate-200 hover:bg-slate-50 transition"
+              >
+                <input
+                  type="checkbox"
+                  checked={selected.includes(h.id)}
+                  onChange={() => toggleSelect(h.id)}
+                  className="w-4 h-4 cursor-pointer"
+                />
+                <button
+                  onClick={() => fetchGeo(h.ip)}
+                  className="flex-1 text-left hover:text-blue-600 transition"
+                >
+                  <div className="font-mono font-semibold text-slate-900">{h.ip}</div>
+                  <div className="text-sm text-slate-600">
+                    {h.result.city}, {h.result.country} • {new Date(h.created_at).toLocaleString()}
+                  </div>
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </main>
   );
 }

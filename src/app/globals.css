@@ -6,6 +6,7 @@
   --background: #f8fafc;
   --foreground: #0f172a;
   --muted: #6b7280;
+  --primary: #3b82f6;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -14,6 +15,10 @@
     --foreground: #e6eef8;
     --muted: #94a3b8;
   }
+}
+
+* {
+  @apply scroll-smooth;
 }
 
 body {
@@ -28,6 +33,29 @@ body {
     Roboto,
     'Helvetica Neue',
     Arial;
+}
+
+html {
+  @apply scroll-smooth;
+}
+
+/* Button and component base styles */
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply px-4 py-2 border border-slate-300 text-slate-700 font-medium rounded-lg hover:bg-slate-50 transition;
+  }
+
+  .input-field {
+    @apply px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition;
+  }
+
+  .card {
+    @apply bg-white rounded-xl shadow-lg p-6 border border-slate-200;
+  }
 }
 
 .leaflet-container {

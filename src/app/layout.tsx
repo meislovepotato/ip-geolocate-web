@@ -26,23 +26,30 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <header className="w-full bg-white/60 backdrop-blur sticky top-0 z-20 border-b">
-          <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
-            <Link href="/" className="font-semibold">
-              IP Geolocate
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-slate-50`}>
+        <header className="w-full bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+          <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <Link href="/" className="flex items-center gap-2">
+              <span className="text-2xl">🌍</span>
+              <span className="font-bold text-slate-900 text-lg">IP Geolocate</span>
             </Link>
-            <nav>
-              <Link href="/home" className="text-sm text-slate-600 hover:text-slate-900 mr-4">
+            <nav className="flex items-center gap-8">
+              <Link
+                href="/home"
+                className="text-sm font-medium text-slate-600 hover:text-slate-900 transition"
+              >
                 Home
               </Link>
-              <Link href="/login" className="text-sm text-slate-600 hover:text-slate-900">
+              <Link
+                href="/login"
+                className="text-sm font-medium text-slate-600 hover:text-slate-900 transition"
+              >
                 Login
               </Link>
             </nav>
           </div>
         </header>
-        <main className="min-h-[80vh]">{children}</main>
+        <main className="min-h-[calc(100vh-80px)] bg-slate-50">{children}</main>
       </body>
     </html>
   );
