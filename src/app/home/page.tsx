@@ -1,7 +1,7 @@
-"use client";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import GeoMap from "./components/GeoMap";
+'use client';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import GeoMap from './components/GeoMap';
 
 type GeoInfo = {
   ip: string;
@@ -25,19 +25,19 @@ type SearchHistory = {
 export default function HomePage() {
   const router = useRouter();
   const [geo, setGeo] = useState<GeoInfo | null>(null);
-  const [ip, setIp] = useState<string>("");
-  const [error, setError] = useState<string>("");
+  const [loading, setLoading] = useState(false);
+  const [ip, setIp] = useState<string>('');
+  const [error, setError] = useState<string>('');
   const [history, setHistory] = useState<SearchHistory[]>([]);
   const [selected, setSelected] = useState<number[]>([]);
 
-  const token =
-    typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
   useEffect(() => {
     if (!token) {
-      router.push("/login");
+      router.push('/login');
       return;
     }
     fetchGeo();
@@ -47,21 +47,23 @@ export default function HomePage() {
 
   async function fetchGeo(ipParam?: string) {
     try {
-      const url = ipParam
-        ? `${API_URL}/api/geo?ip=${ipParam}`
-        : `${API_URL}/api/geo`;
+      setLoading(true);
+      const url = ipParam ? `${API_URL}/api/geo?ip=${ipParam}` : `${API_URL}/api/geo`;
       const res = await fetch(url);
       const data = await res.json();
 
       if (data.error) {
-        setError("Failed to fetch geo data.");
+        setError('Failed to fetch geo data.');
+        setLoading(false);
         return;
       }
       setGeo(data);
-      setError("");
+      setError('');
+      setLoading(false);
     } catch (err) {
       console.error(err);
-      setError("Error fetching geo info.");
+      setError('Error fetching geo info.');
+      setLoading(false);
     }
   }
 
@@ -78,16 +80,16 @@ export default function HomePage() {
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isValidIP(ip)) {
-      setError("❌ Invalid IP address format.");
+      setError('❌ Invalid IP address format.');
       return;
     }
     await fetchGeo(ip);
-    setIp("");
+    setIp('');
     fetchHistory();
   };
 
   const handleClear = () => {
-    setIp("");
+    setIp('');
     fetchGeo();
   };
 
@@ -98,23 +100,21 @@ export default function HomePage() {
   };
 
   function handleLogout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    router.push("/login");
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    router.push('/login');
   }
 
   const toggleSelect = (id: number) => {
-    setSelected((prev) =>
-      prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id]
-    );
+    setSelected((prev) => (prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id]));
   };
 
   const deleteSelected = async () => {
     if (selected.length === 0) return;
     try {
       await fetch(`${API_URL}/api/history`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ids: selected }),
       });
       setSelected([]);
@@ -137,13 +137,25 @@ export default function HomePage() {
           placeholder="Enter IP address"
           className="border px-3 py-2 rounded flex-1"
         />
-        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
-          Search
+        <button
+          type="submit"
+          className="bg-blue-600 text-white px-4 py-2 rounded"
+          disabled={loading}
+        >
+          {loading ? 'Searching...' : 'Search'}
         </button>
-        <button type="button" onClick={handleClear} className="bg-gray-500 text-white px-4 py-2 rounded">
+        <button
+          type="button"
+          onClick={handleClear}
+          className="bg-gray-500 text-white px-4 py-2 rounded"
+        >
           Clear
         </button>
-        <button type="button" onClick={handleLogout} className="bg-red-600 text-white px-4 py-2 rounded">
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="bg-red-600 text-white px-4 py-2 rounded"
+        >
           Logout
         </button>
       </form>
@@ -153,15 +165,33 @@ export default function HomePage() {
       {/* Geo Result */}
       {geo && (
         <div className="bg-white shadow p-4 mb-4 rounded">
-          <p><b>IP:</b> {geo.ip}</p>
-          <p><b>Hostname:</b> {geo.hostname || "N/A"}</p>
-          <p><b>City:</b> {geo.city}</p>
-          <p><b>Region:</b> {geo.region}</p>
-          <p><b>Country:</b> {geo.country}</p>
-          <p><b>Location:</b> {geo.loc}</p>
-          <p><b>Organization:</b> {geo.org}</p>
-          <p><b>Postal:</b> {geo.postal || "N/A"}</p>
-          <p><b>Timezone:</b> {geo.timezone}</p>
+          <p>
+            <b>IP:</b> {geo.ip}
+          </p>
+          <p>
+            <b>Hostname:</b> {geo.hostname || 'N/A'}
+          </p>
+          <p>
+            <b>City:</b> {geo.city}
+          </p>
+          <p>
+            <b>Region:</b> {geo.region}
+          </p>
+          <p>
+            <b>Country:</b> {geo.country}
+          </p>
+          <p>
+            <b>Location:</b> {geo.loc}
+          </p>
+          <p>
+            <b>Organization:</b> {geo.org}
+          </p>
+          <p>
+            <b>Postal:</b> {geo.postal || 'N/A'}
+          </p>
+          <p>
+            <b>Timezone:</b> {geo.timezone}
+          </p>
         </div>
       )}
       {/* Geo Map */}
@@ -171,21 +201,19 @@ export default function HomePage() {
       <h2 className="text-xl font-semibold mb-2">History</h2>
       {history.length > 0 && (
         <div className="flex items-center mb-4 gap-2">
-            <input
-              type="checkbox"
-              checked={selected.length === history.length}
-              onChange={(e) =>
-                setSelected(e.target.checked ? history.map((h) => h.id) : [])
-              }
-            />
-      
-            <button
-              className="bg-red-600 text-white px-2 py-1 text-sm rounded"
-              onClick={deleteSelected}
-              disabled={selected.length === 0}
-            >
-              Delete Selected
-            </button>
+          <input
+            type="checkbox"
+            checked={selected.length === history.length}
+            onChange={(e) => setSelected(e.target.checked ? history.map((h) => h.id) : [])}
+          />
+
+          <button
+            className="bg-red-600 text-white px-2 py-1 text-sm rounded"
+            onClick={deleteSelected}
+            disabled={selected.length === 0}
+          >
+            Delete Selected
+          </button>
         </div>
       )}
       <ul className="space-y-2">
@@ -196,10 +224,7 @@ export default function HomePage() {
               checked={selected.includes(h.id)}
               onChange={() => toggleSelect(h.id)}
             />
-            <span
-              className="cursor-pointer text-blue-600"
-              onClick={() => fetchGeo(h.ip)}
-            >
+            <span className="cursor-pointer text-blue-600" onClick={() => fetchGeo(h.ip)}>
               {h.ip} - {h.result.city}, {h.result.country} (
               {new Date(h.created_at).toLocaleString()})
             </span>
